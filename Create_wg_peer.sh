@@ -12,6 +12,10 @@ echo "Peer Number is $number"
 ##### Variable for where the files will be #####
 scon="/etc/wireguard/wg0.conf"
 pcon="/etc/wireguard/peer$number.conf"
+port=""
+pubip=""
+spubk=`cat /etc/wireguard/server_publickey`
+dnsaddr=""
 
 ##### Generate the actual keys#####
 wg genkey | tee peer"$number"_privatekey | wg pubkey > peer"$number"_publickey
@@ -31,12 +35,12 @@ echo "" >> $scon
 ##### Write the configuration to the Peer Config File #####
 echo "[Interface]" > $pcon
 echo "Address = 10.10.10."$number"/32" >> $pcon
-echo "DNS = 192.168.1.245" >> $pcon
+echo "DNS = $dnsaddr" >> $pcon
 echo "PrivateKey = $prik" >> $pcon
 echo "" >> $pcon
 echo "[Peer]" >> $pcon
-echo "PublicKey = U4K0j2dgXuOLpTLnBhccMiCMn6RS9kVQSUhsTz/PSyA=" >> $pcon
-echo "Endpoint = aksg.duckdns.org:8988" >> $pcon
+echo "PublicKey = $spubk" >> $pcon
+echo "Endpoint = $pubip:$port" >> $pcon
 echo "AllowedIPs = 0.0.0.0/0, ::/0" >> $pcon
 echo "#PersistentkeepAlive = 60" >> $pcon
 
